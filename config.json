@@ -1,6 +1,6 @@
 {
 	"gasoline": {
-		"regex": "^.*(CHEVRON|EXXONMOBIL).*$",
+		"regex": "^.*(CHEVRON|EXXONMOBIL|H-E-B GAS).*$",
 		"flags": "--debits-only"
 	},
 	"total debits": {
