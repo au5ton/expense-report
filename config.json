@@ -3,8 +3,16 @@
 		"regex": "^.*(CHEVRON|EXXONMOBIL).*$",
 		"flags": "--debits-only"
 	},
-	"utilities and electricity": {
-		"regex": "",
+	"total debits": {
+		"regex": ".",
 		"flags": "--debits-only"
+	},
+	"total credits": {
+		"regex": ".",
+		"flags": "--credits-only"
+	},
+	"total net": {
+		"regex": ".",
+		"flags": ""
 	}
 }
