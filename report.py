@@ -8,14 +8,20 @@ init()
 from colorama import Fore, Back, Style
 
 def print_good(*args):
+	if verbose == False:
+		return
 	print("["+ Fore.GREEN + Style.BRIGHT + "✓" + Style.RESET_ALL + "] ", end="")
 	print(*args)
 
 def print_warn(*args):
+	if verbose == False:
+		return
 	print("["+ Fore.RED + Style.BRIGHT + "✗" + Style.RESET_ALL + "] ", end="")
 	print(*args)
 
 def print_info(*args):
+	if verbose == False:
+		return
 	print("[i] ", end="")
 	print(*args)
 
@@ -63,7 +69,7 @@ def generate_report(config, transactions):
 def print_report(report):
 	for k, v in report.items():
 		print(Style.BRIGHT + k + ": " + Style.RESET_ALL + "\t", end="")
-		print(Fore.MAGENTA + str(v["sum"]) + Style.RESET_ALL)
+		print(Fore.MAGENTA + str(round(v["sum"],3)) + Style.RESET_ALL)
 
 if __name__ == "__main__":
 
@@ -71,7 +77,11 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("csvfile", help="The path to the Checking.csv provided from wellsfargo.com")
 	parser.add_argument("-c", action="store", default="config.json", dest="config_file", help="The Path to the config file. (Default: config.json)")
+	parser.add_argument("--verbose", help="increase output verbosity", action="store_true")
 	args = parser.parse_args()
+
+	global verbose
+	verbose = args.verbose
 
 	config = 0 # initial value has no bearing
 	# load config file
