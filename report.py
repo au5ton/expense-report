@@ -56,7 +56,7 @@ def generate_report(config, transactions):
 			# if this is the type of transaction we're looking for
 			if(r.search(row[INFO]) != None):
 				# record sums
-				if(("--debits-only" in v["flags"]) and ()):
+				if("--debits-only" in v["flags"]):
 					if(float(row[AMOUNT]) < 0.0):
 						report[k]["sum"] += float(row[AMOUNT])
 				elif("--credits-only" in v["flags"]):
