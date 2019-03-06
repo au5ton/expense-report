@@ -1,0 +1,10 @@
+{
+	"gasoline": {
+		"regex": "^.*(CHEVRON|EXXONMOBIL).*$",
+		"flags": "--debits-only"
+	},
+	"utilities and electricity": {
+		"regex": "",
+		"flags": "--debits-only"
+	}
+}
