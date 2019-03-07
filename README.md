@@ -18,7 +18,7 @@ optional arguments:
 ```
 
 ## Configuration
-This program will only run with the use of a `config.json` file. A default one is included with the repository and can be modified as necessary.
+This program will only run with the use of a `config.json` file. A default one is included with the repository and can be modified as necessary. Below is an example and doesn't reflect the live repository version.
 ```javascript
 {
 	"gasoline": {

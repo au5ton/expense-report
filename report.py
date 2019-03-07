@@ -36,6 +36,8 @@ def generate_report(config, transactions):
 		dict: Dictionary of report data where each entry has properties: flags, sum
 
 	"""
+	
+	# d4 = {}' 'for d in (d1, d2, d3): d4.update(d)
 
 	# report object to return
 	report = dict()
@@ -45,17 +47,20 @@ def generate_report(config, transactions):
 	AMOUNT = 1
 	INFO = 4
 
+	# fill `report` with user-defined values
 	# iterate over dictionary `config`, let k and v be key-value data
 	for k, v in config.items():
 		# initialize the 2d dictionary
 		report[k] = dict()
 		report[k]["flags"] = v["flags"]
 		report[k]["sum"] = 0
+		report[k]["section"] = v["section"] if "section" in v else ""
+		# 
 		for row in transactions:
 			r = re.compile(v["regex"])
 			# if this is the type of transaction we're looking for
 			if(r.search(row[INFO]) != None):
-				# record sums
+				# record sums				
 				if("--debits-only" in v["flags"]):
 					if(float(row[AMOUNT]) < 0.0):
 						report[k]["sum"] += float(row[AMOUNT])
@@ -64,12 +69,70 @@ def generate_report(config, transactions):
 						report[k]["sum"] += float(row[AMOUNT])
 				else:
 					report[k]["sum"] += float(row[AMOUNT])
-	return report
+	
+	# generate special values based on flags
+	reserved = dict()
+	reserved_keywords = ["Grouped debits", "Grouped credits", "Ungrouped debits", "Ungrouped credits", "Total debits", "Total credits", "Net Total"]
+	for item in reserved_keywords:
+		if(item not in reserved):
+			reserved[item] = dict()
+			reserved[item]["flags"] = ""
+			reserved[item]["section"] = "Automatic"
+			reserved[item]["sum"] = 0
+	
+	# iterate over dictionary `config`, let k and v be key-value data
+	for k, v in config.items():
+		# initialize the 2d dictionary
+		for row in transactions:
+			r = re.compile(v["regex"])
+			# if this is the type of transaction we're looking for
+			if(r.search(row[INFO]) != None):
+				if("--grouped" in v["flags"]):
+					if(float(row[AMOUNT]) < 0.0):
+						reserved["Grouped debits"]["sum"] += float(row[AMOUNT])
+					if(float(row[AMOUNT]) > 0.0):
+						reserved["Grouped credits"]["sum"] += float(row[AMOUNT])
+	
+	for row in transactions:
+		# totals
+		if(float(row[AMOUNT]) < 0.0):
+				reserved["Total debits"]["sum"] += float(row[AMOUNT])
+		if(float(row[AMOUNT]) > 0.0):
+			reserved["Total credits"]["sum"] += float(row[AMOUNT])
+		# Net
+		reserved["Net Total"]["sum"] += float(row[AMOUNT])
+			
+	reserved["Ungrouped debits"]["sum"] = reserved["Total debits"]["sum"] - reserved["Grouped debits"]["sum"]
+	reserved["Ungrouped credits"]["sum"] = reserved["Total credits"]["sum"] - reserved["Grouped credits"]["sum"]
+	
+	concatenated = dict()
+	for d in (report, reserved):
+		concatenated.update(d)
+	
+	return concatenated
+
+last_section = ""
 
 def print_report(report):
-	for k, v in report.items():
+	global last_section
+	
+	def wrap(d):
+		return d[1]["section"]
+
+	# dict is sorted by alphabetical order of flag `f`
+	for k, v in sorted(report.items(), key=wrap):
+		# starting a new section
+		if(last_section != v["section"]):
+			last_section = v["section"]
+			if(v["section"] is not ""):
+				print("\n", end="")
+				print(v["section"])
+				print("=" * len(v["section"]))
 		print(Style.BRIGHT + k + ": " + Style.RESET_ALL + "\t", end="")
 		print(Fore.MAGENTA + str(round(v["sum"],3)) + Style.RESET_ALL)
+	
+	print("\n", end="")
+		
 
 if __name__ == "__main__":
 
