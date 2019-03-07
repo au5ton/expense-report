@@ -1,12 +1,47 @@
 {
 	"gasoline": {
-		"regex": "^.*(CHEVRON|EXXONMOBIL|H-E-B GAS).*$",
-		"flags": "--debits-only",
+		"regex": "^.*(CHEVRON|EXXONMOBIL|GAS).*$",
+		"flags": "--debits-only --grouped",
+		"section": "Essential"
+	},
+	"internet": {
+		"regex": "^.*(SUDDENLINK).*$",
+		"flags": "--debits-only --grouped",
+		"section": "Essential"
+	},
+	"electricity": {
+		"regex": "^.*(ENTERGY).*$",
+		"flags": "--debits-only --grouped",
+		"section": "Essential"
+	},
+	"utilities": {
+		"regex": "^.*(CITY OF NAVASOTA).*$",
+		"flags": "--debits-only --grouped",
 		"section": "Essential"
 	},
 	"entertainment": {
 		"regex": "^.*(DIGITALOCEAN|PATREON|BANDCAMP|WHATBOX).*$",
-		"flags": "--debits-only",
+		"flags": "--debits-only  --grouped",
 		"section": "Essential"
+	},
+	"groceries": {
+		"regex": "^.*(ARLANS|H-E-B|WAL-MART).*$",
+		"flags": "--debits-only  --grouped",
+		"section": "Essential"
+	},
+	"tuition": {
+		"regex": "^.*(TX AM UNIVERSITY UNIVERSITY).*$",
+		"flags": "--debits-only --grouped",
+		"section": "College"
+	},
+	"refund": {
+		"regex": "^.*(ECSI AS AGENT FOR REFUND).*$",
+		"flags": "--credits-only  --grouped",
+		"section": "College"
+	},
+	"supplies": {
+		"regex": "^.*(OFFICE DEPOT|ZYBOOK|WOLFRAMALPHA|CHEGG).*$",
+		"flags": "--debits-only  --grouped",
+		"section": "College"
 	}
 }

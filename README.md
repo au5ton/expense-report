@@ -59,7 +59,10 @@ total credits:  1250.00
 total net:       750.00
 ```
 
-
-
 ## Downloading CSV files from Wells Fargo
 [Wells Fargo has a support page on this topic](https://www.wellsfargo.com/help/online-banking/comma-delimited/)
+
+## TODO
+- document `--grouped`
+- document `section`
+- print section totals
