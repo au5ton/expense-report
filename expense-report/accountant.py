@@ -1,29 +1,5 @@
-#!/usr/bin/env python3
-import csv
-import json
+
 import re
-import argparse
-from colorama import init
-init()
-from colorama import Fore, Back, Style
-
-def print_good(*args):
-	if verbose == False:
-		return
-	print("["+ Fore.GREEN + Style.BRIGHT + "✓" + Style.RESET_ALL + "] ", end="")
-	print(*args)
-
-def print_warn(*args):
-	if verbose == False:
-		return
-	print("["+ Fore.RED + Style.BRIGHT + "✗" + Style.RESET_ALL + "] ", end="")
-	print(*args)
-
-def print_info(*args):
-	if verbose == False:
-		return
-	print("[i] ", end="")
-	print(*args)
 
 def generate_report(config, transactions):
 	"""Generate Report
@@ -77,7 +53,7 @@ def generate_report(config, transactions):
 		if(item not in reserved):
 			reserved[item] = dict()
 			reserved[item]["flags"] = ""
-			reserved[item]["section"] = "Automatic"
+			reserved[item]["section"] = "Generated Section"
 			reserved[item]["sum"] = 0
 	
 	# iterate over dictionary `config`, let k and v be key-value data
@@ -110,69 +86,3 @@ def generate_report(config, transactions):
 		concatenated.update(d)
 	
 	return concatenated
-
-last_section = ""
-
-def print_report(report):
-	global last_section
-	
-	def wrap(d):
-		return d[1]["section"]
-
-	# dict is sorted by alphabetical order of flag `f`
-	for k, v in sorted(report.items(), key=wrap):
-		# starting a new section
-		if(last_section != v["section"]):
-			last_section = v["section"]
-			if(v["section"] is not ""):
-				print("\n", end="")
-				print(v["section"])
-				print("=" * len(v["section"]))
-		print(Style.BRIGHT + k + ": " + Style.RESET_ALL + "\t", end="")
-		print(Fore.MAGENTA + str(round(v["sum"],3)) + Style.RESET_ALL)
-	
-	print("\n", end="")
-		
-
-if __name__ == "__main__":
-
-	# cli arguments
-	parser = argparse.ArgumentParser()
-	parser.add_argument("csvfile", help="The path to the Checking.csv provided from wellsfargo.com")
-	parser.add_argument("-c", action="store", default="config.json", dest="config_file", help="The Path to the config file. (Default: config.json)")
-	parser.add_argument("--verbose", help="increase output verbosity", action="store_true")
-	args = parser.parse_args()
-
-	global verbose
-	verbose = args.verbose
-
-	config = 0 # initial value has no bearing
-	# load config file
-	print_info("Loading config file")
-	try:
-		with open(args.config_file) as f:
-			config = json.load(f)
-			print_good("Config file loaded")
-	except Exception as err:
-		print_warn("An error was thrown. Take a look.")
-		print(err)
-		exit(1)
-
-	transactions = [] # initial value has no bearing
-	# load account data
-	print_info("Loading csv file")
-	try:
-		with open(args.csvfile, newline="") as csvfile:
-			reader =  csv.reader(csvfile, delimiter=",", quotechar="\"")
-			for row in reader:
-				transactions.append(row)
-			print_good("Csv file loaded")
-	except Exception as err:
-		print_warn("An error was thrown. Take a look.")
-		print(err)
-		exit(1)
-
-	print_info("Generating report\n")
-	report = generate_report(config, transactions)
-	print_report(report)
-

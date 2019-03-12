@@ -6,6 +6,7 @@ personal tool for parsing CSV files provided by Wells Fargo
 ## Installation
 - clone repository
 - `pip3 install -r requirements.txt`
+- `python3 -m expense-report`
 
 ## Usage
 ```
