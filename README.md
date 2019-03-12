@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/au5ton/expense-report.svg?style=svg)](https://circleci.com/gh/au5ton/expense-report)
+
 # expense-report
 personal tool for parsing CSV files provided by Wells Fargo
 
