@@ -141,4 +141,5 @@ Net total:      8.41
 [Wells Fargo has a support page on this topic](https://www.wellsfargo.com/help/online-banking/comma-delimited/)
 
 ## TODO
-- ungrouped
+- ungrouped feature
+- write more unit tests
