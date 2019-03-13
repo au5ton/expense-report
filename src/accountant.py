@@ -1,6 +1,7 @@
 
 import re
 import copy
+import json
 
 """
 New functions
@@ -10,97 +11,85 @@ New functions
 - mutate_overall_totals
 """
 
+def generate_report(config, transactions):
+	report = {}
+	report["sections"] = copy.deepcopy(config)
+	mutate_group_sums(report, transactions)
+	mutate_meta_section_sums(report, transactions)
+	mutate_overall_totals(report, transactions)
+	return report
+
 
 def mutate_group_sums(report, transactions):
 	for section in report["sections"]:
 		for group in section["groups"]:
-			group["sum"] = sum_group()
+			group["sum"] = sum_group(transactions=transactions, regex=access(group, "regex"), flags=access(group, "flags"))
 
-def legacy_generate_report(config, transactions):
-	"""Generate Report
+def mutate_meta_section_sums(report, transactions):
+	for section in report["sections"]:
+		section["meta"] = []
+		for prop in section["meta_prop"]:
+			if(prop == "net_total"):
+				d = dict()
+				d["name"] = "Net total"
+				d["flag"] = None
+				d["regex"] = None
+				d["sum"] = sum_section(transactions=transactions, section=section, flags="")
+				section["meta"].append(d)
+			if(prop == "debit_total"):
+				d = dict()
+				d["name"] = "Total debits"
+				d["flag"] = None
+				d["regex"] = None
+				d["sum"] = sum_section(transactions=transactions, section=section, flags="--debits-only")
+				section["meta"].append(d)
+			if(prop == "credit_total"):
+				d = dict()
+				d["name"] = "Total credits"
+				d["flag"] = None
+				d["regex"] = None
+				d["sum"] = sum_section(transactions=transactions, section=section, flags="--credits-only")
+				section["meta"].append(d)
 
-	Args:
-		config (dict): Parsed JSON data that holds the configuration for the report.
-		transactions (list): Parsed CSV data that holds the transactions in the exact structure as provided by Wells Fargo
-
-	Returns:
-		dict: Dictionary of report data where each entry has properties: flags, sum
-
-	"""
+def mutate_overall_totals(report, transactions):
+	# this is honestly more succinct
+	sect = json.loads("""
+	{
+		"title": "Overall totals",
+		"exclusive": false,
+		"optional": false,
+		"groups": [
+			{
+				"name": "Total debits",
+				"flags": null,
+				"regex": null,
+				"sum": 0
+			},
+			{
+				"name": "Total credits",
+				"flags": null,
+				"regex": null,
+				"sum": 0
+			},
+			{
+				"name": "Net total",
+				"flags": null,
+				"regex": null,
+				"sum": 0
+			}
+		],
+		"meta": []
+	}
+	""")
+	for group in sect["groups"]:
+		if(group["name"] == "Total debits"):
+			group["sum"] = sum_config(transactions=transactions, config=report, flags="--debits-only")
+		if(group["name"] == "Total credits"):
+			group["sum"] = sum_config(transactions=transactions, config=report, flags="--credits-only")
+		if(group["name"] == "Net total"):
+			group["sum"] = sum_config(transactions=transactions, config=report, flags="")
 	
-	# d4 = {}' 'for d in (d1, d2, d3): d4.update(d)
-
-	# report object to return
-	report = dict()
-
-	# indexes of rows of `transactions`
-	DATE = 0
-	AMOUNT = 1
-	INFO = 4
-
-	# fill `report` with user-defined values
-	# iterate over dictionary `config`, let k and v be key-value data
-	for k, v in config.items():
-		# initialize the 2d dictionary
-		report[k] = dict()
-		report[k]["flags"] = v["flags"]
-		report[k]["sum"] = 0
-		report[k]["section"] = v["section"] if "section" in v else ""
-		# 
-		for row in transactions:
-			r = re.compile(v["regex"])
-			# if this is the type of transaction we're looking for
-			if(r.search(row[INFO]) != None):
-				# record sums				
-				if("--debits-only" in v["flags"]):
-					if(float(row[AMOUNT]) < 0.0):
-						report[k]["sum"] += float(row[AMOUNT])
-				elif("--credits-only" in v["flags"]):
-					if(float(row[AMOUNT]) > 0.0):
-						report[k]["sum"] += float(row[AMOUNT])
-				else:
-					report[k]["sum"] += float(row[AMOUNT])
-	
-	# generate special values based on flags
-	reserved = dict()
-	reserved_keywords = ["Grouped debits", "Grouped credits", "Ungrouped debits", "Ungrouped credits", "Total debits", "Total credits", "Net Total"]
-	for item in reserved_keywords:
-		if(item not in reserved):
-			reserved[item] = dict()
-			reserved[item]["flags"] = ""
-			reserved[item]["section"] = "Generated Section"
-			reserved[item]["sum"] = 0
-	
-	# iterate over dictionary `config`, let k and v be key-value data
-	for k, v in config.items():
-		# initialize the 2d dictionary
-		for row in transactions:
-			r = re.compile(v["regex"])
-			# if this is the type of transaction we're looking for
-			if(r.search(row[INFO]) != None):
-				if("--grouped" in v["flags"]):
-					if(float(row[AMOUNT]) < 0.0):
-						reserved["Grouped debits"]["sum"] += float(row[AMOUNT])
-					if(float(row[AMOUNT]) > 0.0):
-						reserved["Grouped credits"]["sum"] += float(row[AMOUNT])
-	
-	for row in transactions:
-		# totals
-		if(float(row[AMOUNT]) < 0.0):
-				reserved["Total debits"]["sum"] += float(row[AMOUNT])
-		if(float(row[AMOUNT]) > 0.0):
-			reserved["Total credits"]["sum"] += float(row[AMOUNT])
-		# Net
-		reserved["Net Total"]["sum"] += float(row[AMOUNT])
-			
-	reserved["Ungrouped debits"]["sum"] = reserved["Total debits"]["sum"] - reserved["Grouped debits"]["sum"]
-	reserved["Ungrouped credits"]["sum"] = reserved["Total credits"]["sum"] - reserved["Grouped credits"]["sum"]
-	
-	concatenated = dict()
-	for d in (report, reserved):
-		concatenated.update(d)
-	
-	return concatenated
+	report["sections"].append(sect)
 	
 
 
