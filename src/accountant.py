@@ -2,7 +2,21 @@
 import re
 import copy
 
-def generate_report(config, transactions):
+"""
+New functions
+- generate_report
+- mutate_group_sums
+- mutate_meta_section_sums
+- mutate_overall_totals
+"""
+
+
+def mutate_group_sums(report, transactions):
+	for section in report["sections"]:
+		for group in section["groups"]:
+			group["sum"] = sum_group()
+
+def legacy_generate_report(config, transactions):
 	"""Generate Report
 
 	Args:
@@ -111,7 +125,7 @@ def sum_group(**args):
 	AMOUNT = 1
 	INFO = 4
 	
-	for row in transactions:
+	for row in access(args, "transactions"):
 		conditions_met = True
 		# if arg provided
 		if access(args, "regex") != None:
@@ -156,9 +170,10 @@ def sum_section(**args):
 	
 	for group in args["section"]["groups"]:
 		sigma += sum_group(
-						transactions=access(args, "transactions"), 
-						regex=access(group, "regex"),
-						flags=access(group, "flags") if "flags" not in args else access(args, "flags"))
+				 transactions=access(args, "transactions"), 
+				 regex=access(group, "regex"),
+				 flags=access(group, "flags") if "flags" not in args else access(args, "flags"))
+	return sigma
 
 def sum_config(**args):
 	"""Sum_config
@@ -174,6 +189,24 @@ def sum_config(**args):
 		raise Exception("`transactions` is a required parameter of sum_config(**args)")
 	if "config" not in args:
 		raise Exception("`config` is a required parameter of sum_config(**args)")
+		
+	# total sum
+	sigma = 0.0
+	# indexes of rows of `transactions`
+	DATE = 0
+	AMOUNT = 1
+	INFO = 4
+	
+	for section in access(args, "config"):
+		if "only_section" in args:
+			if access(args, "only_section") != access(section, "title"):
+				continue
+			
+		sigma += sum_section(
+				 transactions=access(args, "transactions"),
+				 section=section,
+				 flags=access(section, "flags"))
+	return sigma
 
 # Return None if the key isn't found, otherwise return the value
 def access(d, key):
@@ -181,6 +214,3 @@ def access(d, key):
 		return d[key]
 	else:
 		return None
-
-if __name__ == '__main__':
-	sum(transactions=[], regex="hello")
