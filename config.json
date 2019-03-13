@@ -7,17 +7,17 @@
 			{
 				"name": "internet",
 				"flags": "",
-				"regex:": "^.*(SUDDENLINK).*$"
+				"regex": "^.*(SUDDENLINK).*$"
 			},
 			{
 				"name": "electricity",
 				"flags": "",
-				"regex:": "^.*(ENTERGY).*$"
+				"regex": "^.*(ENTERGY).*$"
 			},
 			{
 				"name": "utilities",
 				"flags": "",
-				"regex:": "^.*(CITY OF NAVASOTA).*$"
+				"regex": "^.*(CITY OF NAVASOTA).*$"
 			},
 			{
 				"name": "groceries",
@@ -34,17 +34,17 @@
 			{
 				"name": "server hosting",
 				"flags": "",
-				"regex:": "^.*(DIGITALOCEAN|WHATBOX).*$"
+				"regex": "^.*(DIGITALOCEAN|WHATBOX).*$"
 			},
 			{
 				"name": "music",
 				"flags": "",
-				"regex:": "^.*(BANDCAMP).*$"
+				"regex": "^.*(BANDCAMP).*$"
 			},
 			{
 				"name": "patreon",
 				"flags": "",
-				"regex:": "^.*(PATREON).*$"
+				"regex": "^.*(PATREON).*$"
 			}
 		]
 	},
@@ -56,7 +56,7 @@
 			{
 				"name": "gasoline",
 				"flags": "",
-				"regex:": "^.*(CHEVRON|EXXONMOBIL|GAS).*$"
+				"regex": "^.*(CHEVRON|EXXONMOBIL|GAS).*$"
 			}
 		]
 	}
