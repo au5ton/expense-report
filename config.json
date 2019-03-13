@@ -1,47 +1,63 @@
-{
-	"gasoline": {
-		"regex": "^.*(CHEVRON|EXXONMOBIL|GAS).*$",
-		"flags": "--debits-only --grouped",
-		"section": "Essential"
+[
+	{
+		"title": "Home",
+		"exclusive": false,
+		"optional": false,
+		"groups": [
+			{
+				"name": "internet",
+				"flags": "",
+				"regex:": "^.*(SUDDENLINK).*$"
+			},
+			{
+				"name": "electricity",
+				"flags": "",
+				"regex:": "^.*(ENTERGY).*$"
+			},
+			{
+				"name": "utilities",
+				"flags": "",
+				"regex:": "^.*(CITY OF NAVASOTA).*$"
+			},
+			{
+				"name": "groceries",
+				"flags": "",
+				"regex": "^.*(ARLANS|H-E-B|WAL-MART).*$"
+			}
+		]
 	},
-	"internet": {
-		"regex": "^.*(SUDDENLINK).*$",
-		"flags": "--debits-only --grouped",
-		"section": "Essential"
+	{
+		"title": "Entertainment",
+		"exclusive": false,
+		"optional": false,
+		"groups": [
+			{
+				"name": "server hosting",
+				"flags": "",
+				"regex:": "^.*(DIGITALOCEAN|WHATBOX).*$"
+			},
+			{
+				"name": "music",
+				"flags": "",
+				"regex:": "^.*(BANDCAMP).*$"
+			},
+			{
+				"name": "patreon",
+				"flags": "",
+				"regex:": "^.*(PATREON).*$"
+			}
+		]
 	},
-	"electricity": {
-		"regex": "^.*(ENTERGY).*$",
-		"flags": "--debits-only --grouped",
-		"section": "Essential"
-	},
-	"utilities": {
-		"regex": "^.*(CITY OF NAVASOTA).*$",
-		"flags": "--debits-only --grouped",
-		"section": "Essential"
-	},
-	"entertainment": {
-		"regex": "^.*(DIGITALOCEAN|PATREON|BANDCAMP|WHATBOX).*$",
-		"flags": "--debits-only  --grouped",
-		"section": "Essential"
-	},
-	"groceries": {
-		"regex": "^.*(ARLANS|H-E-B|WAL-MART).*$",
-		"flags": "--debits-only  --grouped",
-		"section": "Essential"
-	},
-	"tuition": {
-		"regex": "^.*(TX AM UNIVERSITY UNIVERSITY).*$",
-		"flags": "--debits-only --grouped",
-		"section": "College"
-	},
-	"refund": {
-		"regex": "^.*(ECSI AS AGENT FOR REFUND).*$",
-		"flags": "--credits-only  --grouped",
-		"section": "College"
-	},
-	"supplies": {
-		"regex": "^.*(OFFICE DEPOT|ZYBOOK|WOLFRAMALPHA|CHEGG).*$",
-		"flags": "--debits-only  --grouped",
-		"section": "College"
+	{
+		"title": "Transportation",
+		"exclusive": false,
+		"optional": false,
+		"groups": [
+			{
+				"name": "gasoline",
+				"flags": "",
+				"regex:": "^.*(CHEVRON|EXXONMOBIL|GAS).*$"
+			}
+		]
 	}
-}
+]

@@ -1,5 +1,6 @@
 
 import re
+import copy
 
 def generate_report(config, transactions):
 	"""Generate Report
@@ -86,3 +87,100 @@ def generate_report(config, transactions):
 		concatenated.update(d)
 	
 	return concatenated
+	
+
+
+def sum_group(**args):
+	"""Sum_group
+	Calculates the sum with the provided filters as named variables.
+	Parameters with a * denote that it's required.
+	- * transactions (parsed csv)
+	- * regex (string)
+	- flags (string)
+	"""
+	
+	if "transactions" not in args: 
+		raise Exception("`transactions` is a required parameter of sum_group(**args)")
+	if "regex" not in args:
+		raise Exception("`regex` is a required parameter of sum_group(**args)")
+	
+	# total sum
+	sigma = 0.0
+	# indexes of rows of `transactions`
+	DATE = 0
+	AMOUNT = 1
+	INFO = 4
+	
+	for row in transactions:
+		conditions_met = True
+		# if arg provided
+		if access(args, "regex") != None:
+			# note if condition is not met
+			r = re.compile(access(args, "regex"))
+			if(r.search(row[INFO]) == None):
+				conditions_met = False
+		if access(args, "flags") != None:
+			# note if condition is not met
+			if("--debits-only" in access(args, "flags")):
+				# if not a debit
+				if(float(row[AMOUNT]) >= 0.0):
+					conditions_met = False
+			if("--credits-only" in access(args, "flags")):
+				# if not a credit
+				if(float(row[AMOUNT]) <= 0.0):
+					conditions_met = False
+		if conditions_met == True:
+			sigma += float(row[AMOUNT])
+	return sigma
+
+def sum_section(**args):
+	"""Sum_section
+	Calculates the sum with the provided filters as named variables.
+	Parameters with a * denote that it's required.
+	- * transactions (parsed csv)
+	- * section (object)
+	- flags (string)
+	"""
+	
+	if "transactions" not in args: 
+		raise Exception("`transactions` is a required parameter of sum_section(**args)")
+	if "section" not in args:
+		raise Exception("`section` is a required parameter of sum_section(**args)")
+	
+	# total sum
+	sigma = 0.0
+	# indexes of rows of `transactions`
+	DATE = 0
+	AMOUNT = 1
+	INFO = 4
+	
+	for group in args["section"]["groups"]:
+		sigma += sum_group(
+						transactions=access(args, "transactions"), 
+						regex=access(group, "regex"),
+						flags=access(group, "flags") if "flags" not in args else access(args, "flags"))
+
+def sum_config(**args):
+	"""Sum_config
+	Calculates the sum with the provided filters as named variables.
+	Parameters with a * denote that it's required.
+	- * transactions (parsed csv)
+	- * config (object)
+	- flags (string)
+	- only_section (string)
+	"""
+	
+	if "transactions" not in args: 
+		raise Exception("`transactions` is a required parameter of sum_config(**args)")
+	if "config" not in args:
+		raise Exception("`config` is a required parameter of sum_config(**args)")
+
+# Return None if the key isn't found, otherwise return the value
+def access(d, key):
+	if key in d:
+		return d[key]
+	else:
+		return None
+
+if __name__ == '__main__':
+	sum(transactions=[], regex="hello")
