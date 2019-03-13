@@ -24,7 +24,8 @@
 				"flags": "",
 				"regex": "^.*(ARLANS|H-E-B|WAL-MART).*$"
 			}
-		]
+		],
+		"meta_prop": ["debit_total", "credit_total", "net_total"]
 	},
 	{
 		"title": "Entertainment",
