@@ -4,21 +4,16 @@ init()
 from colorama import Fore, Back, Style
 
 def print_report(report):
-	last_section = ""
-
-	# dict is sorted by alphabetical order of flag `f`
-	for k, v in sorted(report.items(), key=_wrap):
-		# starting a new section
-		if(last_section != v["section"]):
-			last_section = v["section"]
-			if(v["section"] is not ""):
-				print("\n", end="")
-				print(v["section"])
-				print("=" * len(v["section"]))
-		print(Style.BRIGHT + k + ": " + Style.RESET_ALL + "\t", end="")
-		print(Fore.MAGENTA + str(round(v["sum"],3)) + Style.RESET_ALL)
-	
+	for section in report["sections"]:
+		print("\n", end="")
+		print(section["title"])
+		print("=" * len(section["title"]))
+		for group in section["groups"]:
+			print(Style.BRIGHT + group["name"] + ": " + Style.RESET_ALL + "\t", end="")
+			print(Fore.MAGENTA + str(round(group["sum"], 3)) + Style.RESET_ALL)
+		if len(section["meta"]) > 0:
+			print("-" * len(section["title"]))
+			for group in section["meta"]:
+				print(Style.BRIGHT + group["name"] + ": " + Style.RESET_ALL + "\t", end="")
+				print(Fore.MAGENTA + str(round(group["sum"], 3)) + Style.RESET_ALL)
 	print("\n", end="")
-	
-def _wrap(d):
-		return d[1]["section"]

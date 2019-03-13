@@ -19,7 +19,6 @@ def generate_report(config, transactions):
 	mutate_overall_totals(report, transactions)
 	return report
 
-
 def mutate_group_sums(report, transactions):
 	for section in report["sections"]:
 		for group in section["groups"]:
@@ -28,6 +27,8 @@ def mutate_group_sums(report, transactions):
 def mutate_meta_section_sums(report, transactions):
 	for section in report["sections"]:
 		section["meta"] = []
+		if "meta_prop" not in section:
+			section["meta_prop"] = []
 		for prop in section["meta_prop"]:
 			if(prop == "net_total"):
 				d = dict()
@@ -83,11 +84,11 @@ def mutate_overall_totals(report, transactions):
 	""")
 	for group in sect["groups"]:
 		if(group["name"] == "Total debits"):
-			group["sum"] = sum_config(transactions=transactions, config=report, flags="--debits-only")
+			group["sum"] = sum_group(transactions=transactions, regex="^.*$", flags="--debits-only")
 		if(group["name"] == "Total credits"):
-			group["sum"] = sum_config(transactions=transactions, config=report, flags="--credits-only")
+			group["sum"] = sum_group(transactions=transactions, regex="^.*$", flags="--credits-only")
 		if(group["name"] == "Net total"):
-			group["sum"] = sum_config(transactions=transactions, config=report, flags="")
+			group["sum"] = sum_group(transactions=transactions, regex="^.*$", flags="")
 	
 	report["sections"].append(sect)
 	
